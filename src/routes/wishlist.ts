@@ -3,8 +3,8 @@ import { addToWishList, removeFromWishlist } from "../controllers/wishlist";
 const wishlistRoute = express();
 
 
-wishlistRoute.post("/add-to-cart", addToWishList)
-wishlistRoute.post("/remove-from-cart", removeFromWishlist)
+wishlistRoute.post("/add-to-wishlist", addToWishList)
+wishlistRoute.post("/remove-from-wishlist", removeFromWishlist)
 
 
 export default wishlistRoute   

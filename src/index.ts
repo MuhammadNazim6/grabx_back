@@ -7,6 +7,8 @@ import { connectToDatabase } from './db';
 import productRoute from './routes/product';
 import cartRoute from './routes/cart';
 import wishlistRoute from './routes/wishlist';
+import addressRoute from './routes/address';
+import orderRoute from './routes/order';
 
 dotenv.config();
 connectToDatabase()
@@ -32,6 +34,8 @@ app.use("/auth", userRoute);
 app.use("/product", productRoute);
 app.use("/cart", cartRoute);
 app.use("/wishlist", wishlistRoute);
+app.use("/address", addressRoute);
+app.use("/order", orderRoute);
 
 
 

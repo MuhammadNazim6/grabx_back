@@ -144,4 +144,3 @@ export const googleLogin = async (req: Request, res: Response) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
