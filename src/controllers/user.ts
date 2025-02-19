@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { User } from "../models/user";
+import jwt from "jsonwebtoken";
 
 const securePassword = async (password: string) => {
   try {
@@ -26,13 +27,25 @@ export const signup = async (req: Request, res: Response) => {
       email,
       name,
       password: await securePassword(password),
-      mobile
+      mobile,
     };
     const user = await User.create(data);
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.AUTH_SECRET as string,
+      { expiresIn: "3h" }
+    );
+
+    const userData = user.toObject();
+    const userWithToken = { ...userData, token, password: null };
+
     res.status(200).json({
       success: true,
       message: "Signup successfull",
-      data: user,
+      data: userWithToken,
     });
   } catch (error) {
     console.error(error);
@@ -45,11 +58,24 @@ export const googleSignin = async (req: Request, res: Response) => {
     const { email, name, password } = req.body;
     const userExists = await User.findOne({ email });
     if (userExists) {
+
+      const token = jwt.sign(
+        {
+          id: userExists._id,
+          email: userExists.email,
+        },
+        process.env.AUTH_SECRET as string,
+        { expiresIn: "3h" }
+      );
+  
+      const userData = userExists.toObject();
+      const userWithToken = { ...userData, token, password: null };
+
       if (userExists.isGoogle) {
         res.status(200).json({
           success: true,
           message: "Logged in successfully",
-          data: userExists,
+          data: userWithToken,
         });
         return;
       }
@@ -65,14 +91,25 @@ export const googleSignin = async (req: Request, res: Response) => {
       email,
       name,
       password: await securePassword(password),
-      isGooglea: true,
+      isGoogle: true,
     };
 
     const user = await User.create(data);
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.AUTH_SECRET as string,
+      { expiresIn: "3h" }
+    );
+
+    const userData = user.toObject();
+    const userWithToken = { ...userData, token, password: null };
     res.status(200).json({
       success: true,
       message: "Signup successfull",
-      data: user,
+      data: userWithToken,
     });
   } catch (error) {
     console.error(error);
@@ -83,7 +120,9 @@ export const googleSignin = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email }).select(
+      "_id name email mobile password"
+    );
     if (!userExists) {
       res.status(200).json({
         success: false,
@@ -103,10 +142,21 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
+    const token = jwt.sign(
+      {
+        id: userExists._id,
+        email: userExists.email,
+      },
+      process.env.AUTH_SECRET as string,
+      { expiresIn: "3h" }
+    );
+
+    const userData = userExists.toObject();
+    const userWithToken = { ...userData, token, password: null };
     res.status(200).json({
       success: true,
-      message: "Logged in succesfully",
-      data: userExists,
+      message: "Logged in successfully",
+      data: userWithToken,
     });
     return;
   } catch (error) {
@@ -115,32 +165,47 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const googleLogin = async (req: Request, res: Response) => {
-  try {
-    const userExists = await User.findOne({ email: req.body.email });
-    if (!userExists) {
-      res.status(400).json({
-        success: false,
-        message: "User does not exist",
-      });
-      return;
-    }
-    if (!userExists.isGoogle) {
-      res.status(400).json({
-        success: false,
-        message: "This mail not registered with google",
-      });
-      return;
-    }
+// export const googleLogin = async (req: Request, res: Response) => {
+//   try {
+//     const { email } = req.body;
+//     const userExists = await User.findOne({ email }).select(
+//       "_id name email mobile password"
+//     );
+//     if (!userExists) {
+//       res.status(400).json({
+//         success: false,
+//         message: "User does not exist",
+//       });
+//       return;
+//     }
+//     if (!userExists.isGoogle) {
+//       res.status(400).json({
+//         success: false,
+//         message: "This mail not registered with google",
+//       });
+//       return;
+//     }
+//     const token = jwt.sign(
+//       {
+//         id: userExists._id,
+//         email: userExists.email,
+//       },
+//       process.env.AUTH_SECRET as string,
+//       { expiresIn: "3h" }
+//     );
 
-    res.status(200).json({
-      success: true,
-      message: "Logged in succesfully",
-      data: userExists,
-    });
-    return;
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-};
+//     const userData = userExists.toObject();
+// console.log('✌️userData --->', userData);
+//     const userWithToken = { ...userData, token, password: null };
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Logged in succesfully",
+//       data: userWithToken,
+//     });
+//     return;
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// };

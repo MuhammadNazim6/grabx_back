@@ -39,15 +39,17 @@ const userSchema: Schema = new Schema(
     },
     mobile: {
       type: Number,
-      required: true,
     },
     password: {
       type: String,
-      required: true,
     },
     is_admin: {
       type: Number,
       required: true,
+      default: false
+    },
+    isGoogle: {
+      type: Boolean,
       default: false
     },
     is_email_verified: {

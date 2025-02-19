@@ -6,7 +6,6 @@ const userRoute = express();
 userRoute.post("/login", login)
 userRoute.post("/signup", signup)
 userRoute.post("/google-signin", googleSignin)
-userRoute.post("/google-login", googleLogin)
 
 
 export default userRoute; 

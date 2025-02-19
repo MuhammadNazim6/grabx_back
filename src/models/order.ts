@@ -21,7 +21,6 @@ interface IOrder extends Document {
   deliveredAt?: Date;
   cancelledAt?: Date;
   refundStatus?: string;
-  notes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,9 +92,6 @@ const orderSchema = new Schema<IOrder>({
   refundStatus: {
     type: String
   },
-  notes: {
-    type: String
-  }
 }, {
   timestamps: true 
 });
