@@ -46,6 +46,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const handleCallback = async (req: Request, res: Response) => {
   const userId = req.user?.id;
+console.log('✌️userId --->', userId);
 
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } =
     req.body;

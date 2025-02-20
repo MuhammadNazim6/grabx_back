@@ -8,7 +8,6 @@ import {
   searchProducts,
   updateProduct,
 } from "../controllers/product";
-import verifyToken from "../middlewares/auth";
 
 const productRoute = express();
 const upload = multer({ storage: multer.memoryStorage() });

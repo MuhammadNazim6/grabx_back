@@ -98,7 +98,6 @@ export const checkIfProductIsInCart = async (req: Request, res: Response) => {
 export const getUserCart = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-console.log('✌️userId --->', userId);
 
     if (!userId) {
       return res.status(400).json({ error: "Missing user ID" });

@@ -113,6 +113,7 @@ export const fetchProducts = async (req: Request, res: Response) => {
 export const getProductDetail = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
+console.log('✌️productId --->', productId);
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -121,6 +122,7 @@ export const getProductDetail = async (req: Request, res: Response) => {
         message: "Product not found.",
       });
     }
+console.log(product);
 
     return res.status(200).json({
       success: true,
