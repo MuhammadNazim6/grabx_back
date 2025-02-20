@@ -1,5 +1,5 @@
 import express from "express";
-import { googleLogin, googleSignin, login, signup } from "../controllers/user";
+import { googleSignin, login, signup } from "../controllers/user";
 const userRoute = express();
 
 

@@ -3,8 +3,7 @@ import { Address } from "../models/address";
 
 export const addAddress = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
     let isDefault = false;
     const existingAddresses = await Address.find({ userId });
     if (existingAddresses.length === 0) {
@@ -58,7 +57,7 @@ export const addAddress = async (req: Request, res: Response) => {
 
 export const fetchUserAddresses = async (req: Request, res: Response) => {
   try {
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
     const addresses = await Address.find({ userId });
 
     res.status(200).json({
@@ -136,7 +135,7 @@ export const editAddress = async (req: Request, res: Response) => {
 export const deleteAddress = async (req: Request, res: Response) => {
   try {
     const { _id } = req.body;
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
     const deletedAddress = await Address.findByIdAndDelete(_id);
     if (!deletedAddress) {
       return res.status(404).json({
@@ -145,10 +144,7 @@ export const deleteAddress = async (req: Request, res: Response) => {
       });
     }
     if (deletedAddress.isDefault) {
-      await Address.findOneAndUpdate(
-        { userId },
-        { isDefault: true }
-      );
+      await Address.findOneAndUpdate({ userId }, { isDefault: true });
     }
 
     res.status(200).json({
@@ -168,7 +164,7 @@ export const deleteAddress = async (req: Request, res: Response) => {
 export const updateDefaultAddress = async (req: Request, res: Response) => {
   try {
     const { addressId } = req.params;
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
 
     await Address.updateMany({ userId }, { isDefault: false });
     const updatedAddress = await Address.findByIdAndUpdate(

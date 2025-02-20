@@ -12,10 +12,9 @@ declare global {
 export interface UserPayload {
   id: number;
   email: string;
-  // iat: number;
-  // exp: number;
 }
 
+// eslint-disable-next-line consistent-return
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
   if (!process.env.AUTH_SECRET) {
     return res.status(400).json({

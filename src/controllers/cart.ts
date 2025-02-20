@@ -4,7 +4,7 @@ import { Cart } from "../models/cart";
 export const addToCart = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
 
     if (!userId || !productId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -43,8 +43,7 @@ export const addToCart = async (req: Request, res: Response) => {
 export const removeFromCart = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    // const userId = req.user?.id;
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
 
     if (!userId || !productId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -65,7 +64,9 @@ export const removeFromCart = async (req: Request, res: Response) => {
     cart.products.splice(productIndex, 1);
     await cart.save();
 
-    res.status(200).json({ message: "Item removed from cart successfully", success: true });
+    res
+      .status(200)
+      .json({ message: "Item removed from cart successfully", success: true });
   } catch (error) {
     res.status(500).json({ error: "Failed to remove item from cart" });
   }
@@ -74,7 +75,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
 export const checkIfProductIsInCart = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
 
     if (!userId || !productId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -96,7 +97,8 @@ export const checkIfProductIsInCart = async (req: Request, res: Response) => {
 
 export const getUserCart = async (req: Request, res: Response) => {
   try {
-    const userId = "67adecdbac03c08cbc47d946";
+    const userId = req.user?.id;
+console.log('✌️userId --->', userId);
 
     if (!userId) {
       return res.status(400).json({ error: "Missing user ID" });

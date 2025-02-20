@@ -1,13 +1,22 @@
 import express from "express";
-import { addAddress, deleteAddress, editAddress, fetchUserAddresses, updateDefaultAddress } from "../controllers/address";
+import {
+  addAddress,
+  deleteAddress,
+  editAddress,
+  fetchUserAddresses,
+  updateDefaultAddress,
+} from "../controllers/address";
+import verifyToken from "../middlewares/auth";
 const addressRoute = express();
 
+addressRoute.post("/add-address", verifyToken, addAddress);
+addressRoute.post("/edit-address", verifyToken, editAddress);
+addressRoute.post("/delete-address", verifyToken, deleteAddress);
+addressRoute.post(
+  "/default-address/:addressId",
+  verifyToken,
+  updateDefaultAddress
+);
+addressRoute.get("/addresses", verifyToken, fetchUserAddresses);
 
-addressRoute.post("/add-address", addAddress)
-addressRoute.post("/edit-address", editAddress)
-addressRoute.post("/delete-address", deleteAddress)
-addressRoute.post("/default-address/:addressId", updateDefaultAddress)
-addressRoute.get("/addresses", fetchUserAddresses)
-
-
-export default addressRoute; 
+export default addressRoute;
