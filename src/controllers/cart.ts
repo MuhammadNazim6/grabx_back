@@ -28,7 +28,7 @@ export const addToCart = async (req: Request, res: Response) => {
       // Create new cart if it doesn't exist
       await Cart.create({
         userId,
-        items: [{ productId, quantity: 1 }],
+        products: [{ productId, quantity: 1 }],
       });
     }
 

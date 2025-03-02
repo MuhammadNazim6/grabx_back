@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000
 
 
 app.use(cors({
-  origin: [process.env.CORS_URL1 as string, process.env.CORS_URL2 as string],
+  origin: [process.env.CORS_URL1 as string, process.env.CORS_URL2 as string,process.env.CORS_URL3 as string,process.env.CORS_URL4 as string],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']

@@ -13,14 +13,16 @@ interface IProduct extends Document {
   brand?: string;
   actualPrice: number;
   size: string;
+  waist:string;
+  length:string;
   images: string[];
   category: string;
-  offerPrice?: number;
+  sellingPrice?: number;
   ratings: IRating[];
   stock: number;
   is_listed: boolean;
   offers: Schema.Types.ObjectId[];
-  quality: number;
+  condition: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,9 +44,6 @@ const productSchema = new Schema<IProduct>(
       type: String,
       trim: true,
     },
-    brand: {
-      type: String,
-    },
     actualPrice: {
       type: Number,
       required: true,
@@ -52,7 +51,12 @@ const productSchema = new Schema<IProduct>(
     },
     size: {
       type: String,
-      required: true,
+    },
+    waist: {
+      type: String,
+    },
+    length: {
+      type: String,
     },
     images: {
       type: [String],
@@ -62,7 +66,7 @@ const productSchema = new Schema<IProduct>(
       type: String,
       required: true,
     },
-    offerPrice: {
+    sellingPrice: {
       type: Number,
       min: 0,
     },
@@ -82,7 +86,7 @@ const productSchema = new Schema<IProduct>(
         ref: "Offer",
       },
     ],
-    quality: {
+    condition: {
       type: Number,
       required: true,
       min: 1,

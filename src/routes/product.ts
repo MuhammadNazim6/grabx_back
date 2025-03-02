@@ -5,7 +5,6 @@ import {
   deleteProduct,
   fetchProducts,
   getProductDetail,
-  searchProducts,
   updateProduct,
 } from "../controllers/product";
 
@@ -14,7 +13,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 productRoute.get("/fetch-products", fetchProducts);
 productRoute.get("/fetch-product-details/:productId", getProductDetail);
-// productRoute.get("/search-products", searchProducts)
 
 productRoute.post("/add-product", upload.array("files"), addProduct);
 productRoute.post("/edit-product", upload.array("files"), updateProduct);

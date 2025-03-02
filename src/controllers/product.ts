@@ -42,7 +42,7 @@ export const fetchProducts = async (req: Request, res: Response) => {
       brand,
       priceRange,
       size,
-      quality,
+      condition,
       search,
       limit,
       page = 1,
@@ -52,8 +52,13 @@ export const fetchProducts = async (req: Request, res: Response) => {
     // Add filters to query based on parameters
     if (category && category != "all") query.category = category;
     if (brand) query.brand = brand;
-    if (size) query.size = size;
-    if (quality) query.quality = Number(quality);
+    if (size) {
+      query.$or = [
+        { waist: { $regex: size, $options: "i" } },
+        { length: { $regex: size, $options: "i" } },
+      ];
+    }
+    if (condition) query.condition = Number(condition);
     if (search) {
       query.$or = [
         { productName: { $regex: search, $options: "i" } },
@@ -63,8 +68,8 @@ export const fetchProducts = async (req: Request, res: Response) => {
 
     // Handle price range
     if (priceRange) {
-      query.actualPrice = {};
-      if (priceRange) query.actualPrice.$lte = Number(priceRange);
+      query.sellingPrice = {};
+      if (priceRange) query.sellingPrice.$lte = Number(priceRange);
     }
 
     // Get total count first
@@ -75,7 +80,7 @@ export const fetchProducts = async (req: Request, res: Response) => {
 
     // Then get the paginated results
     let products;
-    if (Number(limit) >= 3) {
+    if (Number(limit) >= 0) {
       products = await Product.find(query).skip(skip).limit(Number(limit));
     } else {
       products = await Product.find(query);
@@ -113,7 +118,6 @@ export const fetchProducts = async (req: Request, res: Response) => {
 export const getProductDetail = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-console.log('✌️productId --->', productId);
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -122,7 +126,6 @@ console.log('✌️productId --->', productId);
         message: "Product not found.",
       });
     }
-console.log(product);
 
     return res.status(200).json({
       success: true,
@@ -139,40 +142,6 @@ console.log(product);
   }
 };
 
-export const searchProducts = async (req: Request, res: Response) => {
-  try {
-    const { category, minPrice, maxPrice, size, quality, brand, productName } =
-      req.query;
-    const query: any = {};
-
-    if (category) query.category = category;
-    if (size) query.size = size;
-    if (quality) query.quality = quality;
-    if (brand) query.brand = brand;
-    if (productName) query.productName = { $regex: name, $options: "i" };
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.actualPrice.$gte = Number(minPrice);
-      if (maxPrice) query.actualPrice.$lte = Number(maxPrice);
-    }
-
-    const products = await Product.find(query);
-
-    return res.status(200).json({
-      success: true,
-      message: "Products fetched successfully",
-      data: products,
-      count: products.length,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Error while searching products",
-      error: error,
-    });
-  }
-};
 
 export const addProduct = async (req: Request, res: Response) => {
   try {
@@ -182,21 +151,23 @@ export const addProduct = async (req: Request, res: Response) => {
       brand,
       actualPrice,
       size,
+      waist,
+      length,
       images,
       category,
-      offerPrice,
+      sellingPrice,
       stock,
-      quality,
+      condition,
       is_listed,
     } = req.body;
 
     if (
       !productName ||
       !actualPrice ||
-      !size ||
+      !sellingPrice ||
       !images ||
       !category ||
-      !quality
+      !condition
     ) {
       return res.status(400).json({
         success: false,
@@ -223,11 +194,13 @@ export const addProduct = async (req: Request, res: Response) => {
       brand,
       actualPrice,
       size,
+      waist,
+      length,
       images: imageUrlsAfterUploading,
       category,
-      offerPrice,
+      sellingPrice,
       stock,
-      quality,
+      condition,
       is_listed,
     });
 
@@ -255,11 +228,13 @@ export const updateProduct = async (req: Request, res: Response) => {
       brand,
       actualPrice,
       size,
+      waist,
+      length,
       images,
       category,
-      offerPrice,
+      sellingPrice,
       stock,
-      quality,
+      condition,
       is_listed,
     } = req.body;
 
@@ -269,10 +244,12 @@ export const updateProduct = async (req: Request, res: Response) => {
       brand,
       actualPrice,
       size,
+      waist,
+      length,
       category,
-      offerPrice,
+      sellingPrice,
       stock,
-      quality,
+      condition,
       is_listed,
     };
 
